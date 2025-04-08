@@ -27,7 +27,7 @@ st.image("data/unet.png", caption="U-Net Architecture Diagram (Example)")
 
 with st.expander("Show model code snippet"):
     st.code("""
-def unet_model(input_shape=(X_SIZE, Y_SIZE, 6), num_classes=5):
+def unet_model(input_shape=(256, 256, 6), num_classes=5):
     inputs = Input(input_shape)
 
     # Encoder
@@ -103,8 +103,11 @@ Weights of each class:
 - Minor Damage: 1.2
 - Major Damage: 1.2
 - Destroyed: 1.2
-Optimizer: **Adam**, Learning Rate: **1e-4**, Batch Size: **8** to handle big amount of data.
-Number of epochs: **20** , Training time: **6.5 hours** on my CPU
+            
+
+Optimizer: **Adam** (Learning Rate: **1e-4**)
+Batch Size: **8** to handle big amount of data.
+Number of epochs: **20** --> Training time: **7.5 hours** on my CPU
 """)
 
 # Example of training curve (use your actual chart)
@@ -123,10 +126,10 @@ The table below shows results on the validation set:
 # Performance Table
 st.table({
     "Class": ["Background", "No Damage", "Minor Damage", "Major Damage", "Destroyed","Accuracy","Macro avg","Weighted avg"],
-    "Precision": [0.99, 0.31, 0.04, 0.00, 0.00, None, 0.27, 0.94],
-    "Recall": [0.94, 0.76, 0.01, 0.00, 0.00, None, 0.34, 0.91],
-    "F1 Score": [0.96, 0.44, 0.01, 0.00, 0.00, 0.91, 0.28, 0.92],
-    "Support": [2465005, 109312, 23041, 20637, 3445, 2621440, 2621440, 2621440]
+    "Precision": [0.99, 0.47, 0.19, 0.34, 0.09, None, 0.42, 0.96],
+    "Recall": [0.96, 0.81, 0.15, 0.48, 0.18, None, 0.52, 0.94],
+    "F1 Score": [0.98, 0.60, 0.17, 0.40, 0.12, 0.94, 0.45, 0.95],
+    "Support": [3459557, 134656, 37994, 32849, 4960, 3670016, 3670016, 3670016]
 })
 
 # Side-by-side visuals
@@ -152,8 +155,4 @@ st.markdown("""
 - Implementing more complex models
 """)
 
-
-
-st.markdown("---")
-st.success("📌 End of Model Development Section")
 
