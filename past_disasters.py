@@ -75,6 +75,8 @@ with tab2:
 
     #Répartition des types de catastrophes (Matplotlib)
 
+    st.header("Severity by disaster type repartition")
+
     # Configuration
     fig_charts = plt.figure(figsize=(12, 6))
     disaster_counts = df['disaster_type'].value_counts()
