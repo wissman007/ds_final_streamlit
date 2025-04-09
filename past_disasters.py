@@ -75,8 +75,6 @@ with tab2:
 
     #Répartition des types de catastrophes (Matplotlib)
 
-    st.header("Severity by disaster type repartition")
-
     # Configuration
     fig_charts = plt.figure(figsize=(12, 6))
     disaster_counts = df['disaster_type'].value_counts()
@@ -87,6 +85,8 @@ with tab2:
 
     plt.tight_layout()
     st.pyplot(fig_charts)
+
+    st.header("Severity by disaster type repartition")
 
     # Filtrer les données post-catastrophe
     df_post = df[df['moment'] == 'post']
