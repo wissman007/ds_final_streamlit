@@ -5,6 +5,7 @@ import plotly.express as px
 from os import path
 import folium
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 # from streamlit_option_menu import option_menu
 
@@ -84,3 +85,47 @@ with tab2:
 
     plt.tight_layout()
     st.pyplot(fig_charts)
+
+    # Filtrer les données post-catastrophe
+    df_post = df[df['moment'] == 'post']
+
+    # Créer une croisée des données
+    cross_tab = pd.crosstab(
+        index=df_post['disaster_type'], 
+        columns=df_post['highest_severity'],
+        normalize='index' # Pour avoir des pourcentages par ligne
+    )
+
+    # Configuration du style
+    last_fig = plt.figure(figsize=(14, 8))
+    sns.set_theme(style="whitegrid")
+
+    # Création du graphique à barres empilées
+    cross_tab.plot(kind='bar', 
+                stacked=True, 
+                colormap='RdYlGn_r', 
+                edgecolor='black',
+                ax=plt.gca())
+
+    # Personnalisation
+    plt.title('Maximal severity repartition by type of disaster (Post-disaster)')
+    plt.xlabel('Type of disaster')
+    plt.ylabel('Severity')
+    plt.xticks(rotation=45, ha='right')
+    plt.legend(title='Severity level', 
+            bbox_to_anchor=(1.05, 1), 
+            loc='upper left')
+
+    # Ajouter les annotations de pourcentage
+    for n, x in enumerate([*cross_tab.index.values]):
+        for (proportion, y_loc) in zip(cross_tab.loc[x], cross_tab.loc[x].cumsum()):
+            if proportion > 0:
+                plt.text(x=n - 0.17,
+                        y=(y_loc - proportion) + (proportion / 2),
+                        s=f'{proportion:.1%}',
+                        color='black',
+                        fontsize=8,
+                        fontweight='bold')
+
+    plt.tight_layout()
+    st.pyplot(last_fig)
