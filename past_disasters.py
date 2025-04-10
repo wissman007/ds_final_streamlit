@@ -28,21 +28,22 @@ with tab1:
     st.dataframe(load_data(), use_container_width=True, hide_index=True)
     st.header("Localisation")
 
-    fig = px.scatter_geo(data_frame=load_data().dropna(), 
-                        lat=load_data().dropna()['lat'],
-                        lon=load_data().dropna()['lgt'],
-                        color=load_data().dropna()['disaster_type'],
-                        projection='equirectangular', 
-                        hover_name=load_data().dropna()['disaster'],
-                        size=load_data().dropna()['severity'], 
-                        animation_frame=load_data().dropna()['moment'],
-                        width=1500, height=768)
-    st.plotly_chart(fig)
-
     #Carte géographique des catastrophes (Folium)
     # Création de la carte
     df = load_data()
     df_post = df[df['moment'] == 'post']
+
+    fig = px.scatter_geo(data_frame=df_post.dropna(), 
+                        lat=df_post.dropna()['lat'],
+                        lon=df_post.dropna()['lgt'],
+                        color=df_post.dropna()['disaster_type'],
+                        projection='equirectangular', 
+                        hover_name=df_post.dropna()['disaster'],
+                        size=df_post.dropna()['severity'], 
+                        animation_frame=df_post.dropna()['moment'],
+                        width=1500, height=768)
+    st.plotly_chart(fig)
+
     m = folium.Map(location=[df_post['lat'].mean(), 
                     df_post['lgt'].mean()], 
                     zoom_start=4)
@@ -72,19 +73,6 @@ with tab2:
                      names=pie_df['disaster_type'])
     
     st.plotly_chart(pie_fig)
-
-    #Répartition des types de catastrophes (Matplotlib)
-
-    # Configuration
-    fig_charts = plt.figure(figsize=(12, 6))
-    disaster_counts = df['disaster_type'].value_counts()
-
-    # Bar plot
-    disaster_counts.plot(kind='bar', color='skyblue')
-    plt.xticks(rotation=45, ha='right')
-
-    plt.tight_layout()
-    st.pyplot(fig_charts)
 
     st.header("Severity by disaster type repartition")
 
@@ -118,11 +106,11 @@ with tab2:
                 edgecolor='black',
                 ax=plt.gca())
     # Personnalisation
-    plt.title('Analyse de la sévérité suivant le type de catastrophe (Post-disaster)')
-    plt.xlabel('Type de Catastrophe')
-    plt.ylabel('Proportion de Sévérité')
+    plt.title('Severity by disaster type repartition')
+    plt.xlabel('Disaster type')
+    plt.ylabel('Severity distribution')
     plt.xticks(rotation=45, ha='right')
-    plt.legend(title='Niveau de Sévérité',
+    plt.legend(title='Severity level',
             bbox_to_anchor=(1.05, 1),
             loc='upper left')
     # Ajouter les annotations de pourcentage
