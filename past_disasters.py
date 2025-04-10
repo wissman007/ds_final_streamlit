@@ -90,34 +90,41 @@ with tab2:
 
     # Filtrer les données post-catastrophe
     df_post = df[df['moment'] == 'post']
-
-    # Créer une croisée des données
-    cross_tab = pd.crosstab(
-        index=df_post['disaster_type'], 
-        columns=df_post['highest_severity'],
-        normalize='index' # Pour avoir des pourcentages par ligne
+    df_post['highest_severity'] = df_post['highest_severity'].replace({
+        'un-classified': 'no-damage',
+        'Unknown': 'no-damage'
+    })
+    # Ordre personnalisé et gestion des catégories
+    severity_order = [ 'destroyed', 'major-damage', 'minor-damage' ,'no-damage']
+    df_post['highest_severity'] = pd.Categorical(
+        df_post['highest_severity'],
+        categories=severity_order,
+        ordered=True
     )
-
+    # Créer un tableau croisé des données et trier par sévérité
+    cross_tab = pd.crosstab(
+        index=df_post['disaster_type'],
+        columns=df_post['highest_severity'],
+        normalize='index'
+    ).sort_values(by=severity_order, ascending=False)  # Tri ajouté ici
     # Configuration du style
     last_fig = plt.figure(figsize=(14, 8))
     sns.set_theme(style="whitegrid")
-
-    # Création du graphique à barres empilées
-    cross_tab.plot(kind='bar', 
-                stacked=True, 
-                colormap='RdYlGn_r', 
+    # Création du graphique avec les couleurs personnalisées
+    colors = [ 'red',  'orange', 'yellow', 'cyan']
+    cross_tab.plot(kind='bar',
+                stacked=True,
+                color=colors,
                 edgecolor='black',
                 ax=plt.gca())
-
     # Personnalisation
-    plt.title('Maximal severity repartition by type of disaster (Post-disaster)')
-    plt.xlabel('Type of disaster')
-    plt.ylabel('Severity')
+    plt.title('Analyse de la sévérité suivant le type de catastrophe (Post-disaster)')
+    plt.xlabel('Type de Catastrophe')
+    plt.ylabel('Proportion de Sévérité')
     plt.xticks(rotation=45, ha='right')
-    plt.legend(title='Severity level', 
-            bbox_to_anchor=(1.05, 1), 
+    plt.legend(title='Niveau de Sévérité',
+            bbox_to_anchor=(1.05, 1),
             loc='upper left')
-
     # Ajouter les annotations de pourcentage
     for n, x in enumerate([*cross_tab.index.values]):
         for (proportion, y_loc) in zip(cross_tab.loc[x], cross_tab.loc[x].cumsum()):
@@ -128,6 +135,6 @@ with tab2:
                         color='black',
                         fontsize=8,
                         fontweight='bold')
-
     plt.tight_layout()
+    plt.show()
     st.pyplot(last_fig)
